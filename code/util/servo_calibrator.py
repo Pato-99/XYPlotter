@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QSlider, QLabel, QVBoxLayout, QSpinBox, QPushButton, QHBoxLayout, QListWidget, QListWidgetItem, QSpacerItem
+from PyQt6.QtWidgets import QApplication, QWidget, QSlider, QLabel, QVBoxLayout, QSpinBox, QPushButton, QHBoxLayout, QListWidget, QListWidgetItem
 from PyQt6.QtCore import Qt, pyqtSignal
 
 import serial
@@ -78,7 +78,7 @@ class PWMSliderBase(QWidget):
     def send_serial(self):
         global ser
         if ser is not None:
-            ser.write(f"m99 {self.value}\n".encode())
+            ser.write(f"M99 {self.value}\n".encode())
         self.serialSent.emit()
 
 class PWMSliderStatic(PWMSliderBase):
@@ -178,10 +178,6 @@ class MainWindow(QWidget):
 
         self.setLayout(layout)
         self.setWindowTitle("Servo util")
-
-
-
-
 
 
 app = QApplication(sys.argv)

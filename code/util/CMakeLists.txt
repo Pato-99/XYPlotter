@@ -1,7 +1,7 @@
 
 add_executable(servo_calibrator servo_calibrator.cpp)
 target_link_libraries(servo_calibrator pico_stdlib)
-target_link_libraries(servo_calibrator mg90s)
+target_link_libraries(servo_calibrator mg90s gcode)
 target_include_directories(servo_calibrator PUBLIC
 	"${PROJECT_SOURCE_DIR}/lib"
 )
