@@ -33,7 +33,7 @@ TMC2209::TMC2209(uint en, uint stp, uint dir, uint ms1, uint ms2, uint diag)
 /**
  * Enable the driver. Pull EN pin low.
 */
-void TMC2209::enable()
+void TMC2209::enable() const
 {
     gpio_put(this->en, 0);
 }
@@ -41,7 +41,7 @@ void TMC2209::enable()
 /**
  * Disable the driver. Pull EN pin high.
 */
-void TMC2209::disable()
+void TMC2209::disable() const
 {
     gpio_put(this->en, 1);
 }
@@ -49,7 +49,7 @@ void TMC2209::disable()
 /**
  * Set direction. Pull DIR pin high or low.
 */
-void TMC2209::setDir(bool dir)
+void TMC2209::setDir(bool dir) const
 {
     gpio_put(this->dir, dir);
 }
@@ -57,7 +57,7 @@ void TMC2209::setDir(bool dir)
 /**
  * Do one step. Toggle STEP pin state.
 */
-void TMC2209::step()
+void TMC2209::step() const
 {
     gpio_put(this->stp, !gpio_get(this->stp));
 }
@@ -68,8 +68,14 @@ void TMC2209::step()
  * @param n     number of steps
  * @param delay inter-step delay in microseconds
 */
-void TMC2209::turnSteps(int n, int delay)
+void TMC2209::turnSteps(int n, int delay) const
 {
+    if (n >= 0) {
+        this->setDir(1);
+    } else {
+        this->setDir(0);
+        n *= -1;
+    }
     for (int i = 0; i < n; i++) {
         this->step();
         sleep_us(delay);
@@ -80,7 +86,7 @@ void TMC2209::turnSteps(int n, int delay)
  * Set microstepping.
  * MS1/MS2: 00/8, 01/64, 10/32, 11/16
 */
-void TMC2209::setMicrostepping(MICROSTEPPING ms)
+void TMC2209::setMicrostepping(MICROSTEPPING ms) const
 {
     switch (ms) {
         case MICROSTEPPING::MS8:

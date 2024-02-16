@@ -8,9 +8,10 @@ enum class LiftState {UP, DOWN};
 
 class Holder
 {
-private:
+public:
     const MG90S clamp;
     const MG90S lift;
+private:
     ClampState clamp_state;
     LiftState lift_state;
 

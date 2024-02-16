@@ -176,8 +176,20 @@ class MainWindow(QWidget):
         self.serialWindow = SerialPortSelectWindow()
         layout.addWidget(self.serialWindow)
 
+
+        motor = QPushButton("TEST MOTORS")
+        motor.clicked.connect(self.test_motors)
+        layout.addWidget(motor)
+        
+
         self.setLayout(layout)
         self.setWindowTitle("Servo util")
+
+    
+    def test_motors(self):
+        global ser
+        if ser is not None:
+            ser.write(f"G0 X10 Y10\n".encode())
 
 
 app = QApplication(sys.argv)

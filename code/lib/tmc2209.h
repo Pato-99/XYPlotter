@@ -23,12 +23,12 @@ public:
             uint ms2,
             uint diag);
 
-    void enable();
-    void disable();
-    void setDir(bool dir);
-    void step();
-    void turnSteps(int n, int delay);
-    void setMicrostepping(MICROSTEPPING ms);
+    void enable() const;
+    void disable() const;
+    void setDir(bool dir) const;
+    void step() const;
+    void turnSteps(int n, int delay) const;
+    void setMicrostepping(MICROSTEPPING ms) const;
 };
 
 

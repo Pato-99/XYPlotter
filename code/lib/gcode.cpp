@@ -77,7 +77,6 @@ bool GCodeLineParser::state_G0_G1()
         this->gcodeLineStream >> c >> value;
         if (this->gcodeLineStream.fail())
             break;
-
         switch (c) {
             case 'X':
                 this->gcode.x = value;
@@ -90,10 +89,9 @@ bool GCodeLineParser::state_G0_G1()
         }
     }
 
-    if (this->gcode.x == 0 && this->gcode.y == 0)
-        return false;
+    // if (this->gcode.x == 0 && this->gcode.y == 0)
+    //     return false;
     
-    // this->gcode.rotateXY();
     return true;
 }
 

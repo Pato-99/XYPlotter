@@ -19,11 +19,11 @@ private:
 
 public:
 	MG90S(uint pin);
-	void enable();
-	void disable();
+	void enable() const;
+	void disable() const;
 
 	// void setAngle(uint level);
-	void setLevel(uint16_t level);
+	void setLevel(uint16_t level) const;
 // private:
 	// uint angleToLevel(uint angle);
 	// uint dutyToAngle(uint duty);

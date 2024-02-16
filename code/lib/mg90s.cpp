@@ -15,17 +15,17 @@ MG90S::MG90S(uint pin)
     pwm_set_wrap(this->pwmSlice, MG90S_PWM_WRAP);
 }
 
-void MG90S::enable()
+void MG90S::enable() const
 {
     pwm_set_enabled(this->pwmSlice, true);
 }
 
-void MG90S::disable()
+void MG90S::disable() const
 {
     pwm_set_enabled(this->pwmSlice, false);
 }
 
-void MG90S::setLevel(uint16_t level)
+void MG90S::setLevel(uint16_t level) const
 {
     pwm_set_chan_level(this->pwmSlice, this->pwmChannel, level);
 }
