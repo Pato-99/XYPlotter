@@ -34,37 +34,29 @@ void Plotter::rotateXY(double& x, double& y)
 int Plotter::mmToSteps(double mm)
 {
     double stepDistance = 0.002454;  // mm
-    return mm * sqrt(2.0) / stepDistance;
+    return mm * sqrt(2.0) / stepDistance;  // multiplied by sqrt(2) to compensate for the coreXY kinematics
 }
 
 void Plotter::move(double x, double y)
 {
     Plotter::rotateXY(x, y);
 
-    int xSteps = mmToSteps(x);
-    int ySteps = mmToSteps(y);
-
-
-    int diffX = xSteps - this->currentX;
-    int diffY = ySteps - this->currentY;
+    Point moveEnd = {mmToSteps(x), mmToSteps(y)};
 
     // std::cout << "\nCurrentX: " << this->currentX
     //           << "\nCurrentY " << this->currentY
     //           << "\nxSteps: " << xSteps
     //           << "\nySteps: " << ySteps << std::endl;
     
-    int speed = 40;
-
-    Line line({this->currentX, this->currentY}, {xSteps, ySteps});
+    Line line(current, moveEnd);
     for ( const auto& point : line ) {
-        this->motorX.turnSteps(point.x - this->currentX, speed);
-        this->motorY.turnSteps(point.y - this->currentY, speed);
-        this->currentX = point.x;
-        this->currentY = point.y;
+        this->motorX.turnSteps(point.x - this->current.x, 0);
+        this->motorY.turnSteps(point.y - this->current.y, 0);
+        current = point;
+        sleep_ms(delay);
     }
 
     std::cout << "OK\n";
-
 }
 
 
