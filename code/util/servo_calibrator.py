@@ -81,6 +81,7 @@ class PWMSliderBase(QWidget):
             ser.write(f"M99 {self.value}\n".encode())
         self.serialSent.emit()
 
+
 class PWMSliderStatic(PWMSliderBase):
     def __init__(self, name, value=4000):
         super().__init__(name, value)

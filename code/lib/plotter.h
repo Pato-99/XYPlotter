@@ -21,7 +21,7 @@ private:
     Point current = {0, 0};  // steps
     bool penIsUp = false;
 
-    int delay = 40;
+    int delay = 100;
 
 public:
     Plotter(MG90S pen, TMC2209 motorX, TMC2209 motorY);
@@ -29,8 +29,8 @@ public:
     void penDown();
     void move(double x, double y);
 //    void homing();
+    static void transformCoordinates(double& x, double& y);
 private:
-    static void rotateXY(double& x, double& y);
     static int mmToSteps(double mm);
 };
 

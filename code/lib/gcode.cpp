@@ -4,30 +4,30 @@
 
 #include "gcode.h"
 
-void GCode::rotateXY()
+
+void G0::execute(Plotter plotter)
 {
-    return;  // TODO
+    plotter.move(this->x, this->y);
 }
 
-void GCode::dump()
+std::ostream& G0::operator<<(std::ostream &os)
 {
-    std::cout << "gcode:\n{";
-    std::cout << "\n\ttype: " << (int)this->type;
-    std::cout << "\n\tnumber: " <<  this->number;
-    std::cout << "\n\tx: " << this->x;
-    std::cout << "\n\ty: " << this->y;
-    std::cout << "\n\ti: " << this->i;
-    std::cout << "\n\tj: " << this->j;
-    std::cout << "\n}\n";
+    os << "gcode:\n{";
+    os << "\n\ttype: " << "G";
+    os << "\n\tnumber: " <<  0;
+    os << "\n\tx: " << this->x;
+    os << "\n\ty: " << this->y;
+    os << "\n}\n";
 }
+
 
 GCodeLineParser::GCodeLineParser(std::string& gcodeLine)
     : gcodeLineStream(std::istringstream(gcodeLine)),
-      gcode(GCode())
+      gcode(nullptr)
 {
 }
 
-GCode GCodeLineParser::getGCode()
+std::unique_ptr<GCode> GCodeLineParser::getGCode()
 {
     return this->gcode;
 }

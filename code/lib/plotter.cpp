@@ -22,7 +22,7 @@ void Plotter::penDown()
     this->penIsUp = false;
 }
 
-void Plotter::rotateXY(double& x, double& y)
+void Plotter::transformCoordinates(double& x, double& y)
 {
     double tmpX = (x - y) / sqrt(2);
     double tmpY = (x + y) / sqrt(2);
@@ -39,7 +39,7 @@ int Plotter::mmToSteps(double mm)
 
 void Plotter::move(double x, double y)
 {
-    Plotter::rotateXY(x, y);
+    Plotter::transformCoordinates(x, y);
 
     Point moveEnd = {mmToSteps(x), mmToSteps(y)};
 
@@ -49,11 +49,18 @@ void Plotter::move(double x, double y)
     //           << "\nySteps: " << ySteps << std::endl;
     
     Line line(current, moveEnd);
+    bool xDir = moveEnd.x >= current.x;
+    bool yDir = moveEnd.y >= current.y;
+    motorX.setDir(xDir);
+    motorY.setDir(yDir);
+
     for ( const auto& point : line ) {
-        this->motorX.turnSteps(point.x - this->current.x, 0);
-        this->motorY.turnSteps(point.y - this->current.y, 0);
+        if (point.x != current.x)
+            motorX.step();
+        if (point.y != current.y)
+            motorY.step();
         current = point;
-        sleep_ms(delay);
+        sleep_us(delay);
     }
 
     std::cout << "OK\n";

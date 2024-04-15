@@ -7,6 +7,7 @@
 #define MG90S_PWM_LEVEL_MID 4167
 #define MG90S_PWM_LEVEL_MAX 7812
 
+#include "pico/stdlib.h"
 
 class MG90S
 {
@@ -18,7 +19,7 @@ private:
 	// uint currentLevel;
 
 public:
-	MG90S(uint pin);
+	explicit MG90S(uint pin);
 	void enable() const;
 	void disable() const;
 

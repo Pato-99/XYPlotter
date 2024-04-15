@@ -5,24 +5,25 @@
 
 #include "gcode.h"
 
-#include "test.h"
+#define EXPECT_EQUAL(a, b) if ((a) != (b)) { std::cout << "\n" << a << " != " << b << std::endl; test_ok = false; }
 
-
-
-int main()
+void gcodeBasicTest()
 {
-    stdio_init_all();
+    std::string test_name("gcodeBasicTest");
+    bool test_ok = true;
 
-    TEST_MODULE("G-Code", "Basic tests")
-    TEST_MODULE_START()
+    std::cout << "= " << test_name << " =";
 
-    TEST_SECTION_START("BASIC")
-
+    // PREPARE
     std::string input("G0 X123 Y123");
-    GCodeLineParser parser(input);
 
-    EXPECT_EQUAL(parser.parse(), true)
+    // ACT
+    GCodeLineParser parser(input);
+    bool parsing_successful = parser.parse();
     GCode gcode = parser.getGCode();
+
+    // ASSERT
+    EXPECT_EQUAL(parsing_successful, true)
     EXPECT_EQUAL(gcode.type, 'G')
     EXPECT_EQUAL(gcode.number, 0)
     EXPECT_EQUAL(gcode.x, 123.0)
@@ -30,6 +31,21 @@ int main()
     EXPECT_EQUAL(gcode.i, 0.0)
     EXPECT_EQUAL(gcode.j, 0.1)
 
-    TEST_SECTION_END()
-    TEST_MODULE_END()
+    if (test_ok)
+        std::cout << " => OK";
+    else
+        std::cout << "\n";
+}
+
+
+int main()
+{
+    stdio_init_all();
+    sleep_ms(2000);  // wait for uart...
+
+    
+    while (true) {
+        gcodeBasicTest();
+        sleep_ms(1000);
+    }
 }

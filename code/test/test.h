@@ -20,8 +20,9 @@
 #define TEST_SECTION_END() if (test_error_code != 0) {                                                                             \
                                std::cout << "Module " << test_module << " : Section " << test_section_name <<  " : Failed test\n"; \
                                return -1;                                                                                          \
-                           } else                                                                                                  \
+                           } else {                                                                                                \
                                 std::cout << "Module " << test_module << " : Section " << test_section_name << " : Passed\n";      \
+                           }                                                                                                       \
                            }
 
 #define EXPECT_EQUAL(a, b) if (!(a) == (b)) { std::cout << "Module " << test_module << " : " << a << " != " << b << std::endl; test_error_code = -1; }

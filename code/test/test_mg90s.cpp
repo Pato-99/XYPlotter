@@ -30,7 +30,7 @@ void test_range(MG90S & servo)
 int main()
 {
     stdio_init_all();
-    MG90S servo(16);
+    MG90S servo(15);
     servo.enable();
 
     while(1) {

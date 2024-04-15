@@ -2,34 +2,47 @@
 #define GCODE_H
 
 #include <sstream>
+#include <ostream>
 #include <string>
+#include <memory>
+
+#include "plotter.h"
 
 // enum class GCodeStatus {OK, BAD};
 enum class GCodeType {G, M, UNKNOWN};
 
-struct GCode
+class GCode
 {
-    char type = 'U';
-    int number = 0;  // TODO int8_t
-    double x = 0;  // TODO float? enough percision?
-    double y = 0;
-    double i = 0;
-    double j = 0;
-
-    // apply 45 deg rotation because of coreXY kinematics
-    void rotateXY();
-    void dump();
+public:
+    virtual void execute(Plotter plotter) = 0;
+    virtual std::ostream& operator << (std::ostream& os) = 0;
 };
+
+class G0 : public GCode
+{
+private:
+    double x;
+    double y;
+public:
+    G0(double x, double y) : x(x), y(y) {};
+    void execute(Plotter plotter) override;
+    std::ostream& operator << (std::ostream& os) override;
+};
+
+class G1 : private G0
+{};
+
 
 class GCodeLineParser
 {
 private:
     std::istringstream gcodeLineStream;
-    GCode gcode;
+    std::unique_ptr<GCode> gcode;
 
 public:
-    GCodeLineParser(std::string& gcodeLine);
-    GCode getGCode();
+    explicit GCodeLineParser(std::string& gcodeLine);
+
+    std::unique_ptr<GCode> getGCode();
     bool parse();
     bool state_G();
     bool state_G0_G1();

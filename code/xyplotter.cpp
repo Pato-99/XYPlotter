@@ -13,7 +13,7 @@
 
 
 int main() {
-    MG90S servo(15);
+    MG90S servo(22);
     servo.enable();
 
     GCodeParser gcodeParser;
@@ -23,8 +23,8 @@ int main() {
     int steps = 10000;
 
     // en, step, dir, ms1, ms2, diag
-    TMC2209 driverX(20, 17, 16, 19, 18, 21);
-    TMC2209 driverY(2, 5, 6, 3, 4, 7);
+    TMC2209 driverX(4, 1, 0, 3, 2, 19);
+    TMC2209 driverY(12, 7, 6, 11, 10, 20);
     driverX.enable();
     driverY.enable();
 
@@ -34,16 +34,8 @@ int main() {
 
     stdio_init_all();
 
-    gpio_init(PICO_DEFAULT_LED_PIN);
-    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
     while (true) {
-        gpio_put(PICO_DEFAULT_LED_PIN, 0);
-        sleep_ms(1000);
-        gpio_put(PICO_DEFAULT_LED_PIN, 1);
-        sleep_ms(1000);
-    }
-    
-    while (true) {
+        std::cout << "GCode:" << std::endl;
         if (!gcodeParser.getGCode(gcode)) {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');  
             std::cout << "Parsing error.\n";
@@ -59,7 +51,7 @@ int main() {
             plotter.penUp();
             sleep_ms(100);
             std::cout << "OK\n";
-        } else if (gcode.type == 'M' && gcode.number == 4) {    
+        } else if (gcode.type == 'M' && gcode.number == 4) {
             plotter.penDown();
             sleep_ms(200);
             std::cout << "OK\n";
