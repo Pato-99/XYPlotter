@@ -22,6 +22,11 @@ void Plotter::penDown()
     this->penIsUp = false;
 }
 
+const MG90S& Plotter::getPen()
+{
+    return this->pen;
+}
+
 void Plotter::transformCoordinates(double& x, double& y)
 {
     double tmpX = (x - y) / sqrt(2);

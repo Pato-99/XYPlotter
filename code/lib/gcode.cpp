@@ -4,7 +4,6 @@
 
 #include "gcode.h"
 
-
 void G0::execute(Plotter plotter)
 {
     plotter.move(this->x, this->y);
@@ -18,43 +17,101 @@ std::ostream& G0::operator<<(std::ostream &os)
     os << "\n\tx: " << this->x;
     os << "\n\ty: " << this->y;
     os << "\n}\n";
+    return os;
+}
+
+void G2::execute(Plotter plotter)
+{
+    // TODO
+}
+
+std::ostream& G2::operator<<(std::ostream &os)
+{
+    os << "gcode:\n{";
+    os << "\n\ttype: " << "G";
+    os << "\n\tnumber: " <<  2;
+    os << "\n\tx: " << this->x;
+    os << "\n\ty: " << this->y;
+    os << "\n\ti: " << this->i;
+    os << "\n\tj: " << this->j;
+    os << "\n}\n";
+    return os;
+}
+
+void M3::execute(Plotter plotter)
+{
+    plotter.penUp();
+}
+
+std::ostream& M3::operator<<(std::ostream &os)
+{
+    os << "gcode:\n{";
+    os << "\n\ttype: " << "M";
+    os << "\n\tnumber: " <<  3;
+    os << "\n}\n";
+    return os;
+}
+
+void M4::execute(Plotter plotter)
+{
+    plotter.penDown();
+}
+
+std::ostream& M4::operator<<(std::ostream &os)
+{
+    os << "gcode:\n{";
+    os << "\n\ttype: " << "M";
+    os << "\n\tnumber: " <<  4;
+    os << "\n}\n";
+    return os;
+}
+
+void M99::execute(Plotter plotter)
+{
+    plotter.getPen().setLevel(this->pwmLevel);
+}
+
+std::ostream& M99::operator<<(std::ostream &os)
+{
+    os << "gcode:\n{";
+    os << "\n\ttype: " << "M";
+    os << "\n\tnumber: " <<  99;
+    os << "\n\tpwmLevel: " <<  this->pwmLevel;
+    os << "\n}\n";
+    return os;
 }
 
 
 GCodeLineParser::GCodeLineParser(std::string& gcodeLine)
-    : gcodeLineStream(std::istringstream(gcodeLine)),
-      gcode(nullptr)
+    : gcodeLineStream(std::istringstream(gcodeLine))
 {
 }
 
-std::unique_ptr<GCode> GCodeLineParser::getGCode()
+std::unique_ptr<GCode> GCodeLineParser::parse()
 {
-    return this->gcode;
-}
-
-bool GCodeLineParser::parse()
-{
-    this->gcodeLineStream >> this->gcode.type;
+    char type;
+    this->gcodeLineStream >> type;
     if (this->gcodeLineStream.fail())
-        return false;
+        return nullptr;
 
-    switch (this->gcode.type) {
+    switch (type) {
         case 'G':
             return this->state_G();
         case 'M':
             return this->state_M();
         default:
-            return false;
+            return nullptr;
     }
 }
 
-bool GCodeLineParser::state_G()
+std::unique_ptr<GCode> GCodeLineParser::state_G()
 {
-    this->gcodeLineStream >> this->gcode.number;
+    int number;
+    this->gcodeLineStream >> number;
     if (this->gcodeLineStream.fail())
-        return false;
+        return nullptr;
 
-    switch (this->gcode.number) {
+    switch (number) {
         case 0:
         case 1:
             return this->state_G0_G1();
@@ -64,14 +121,14 @@ bool GCodeLineParser::state_G()
         case 28:
             return this->state_G28();
         default:
-            return false;
+            return nullptr;
     }
 }
 
-bool GCodeLineParser::state_G0_G1()
+std::unique_ptr<GCode> GCodeLineParser::state_G0_G1()
 {
     char c;
-    double value;
+    double value, x, y;
 
     while (true) {
         this->gcodeLineStream >> c >> value;
@@ -79,75 +136,69 @@ bool GCodeLineParser::state_G0_G1()
             break;
         switch (c) {
             case 'X':
-                this->gcode.x = value;
+                x = value;
                 break;
             case 'Y':
-                this->gcode.y = value;
+                y = value;
                 break;
             default:
-                return false;
+                return nullptr;
         }
     }
-
-    // if (this->gcode.x == 0 && this->gcode.y == 0)
-    //     return false;
-    
-    return true;
+    return std::make_unique<G0>(x, y);
 }
 
 
-bool GCodeLineParser::state_G2_G3()
+std::unique_ptr<GCode> GCodeLineParser::state_G2_G3()
 {
     char x, y, i, j;
-    return this->gcodeLineStream >> x >> this->gcode.x
-                                 >> y >> this->gcode.y
-                                 >> i >> this->gcode.i
-                                 >> j >> this->gcode.j &&
-            x == 'X' &&
-            y == 'Y' &&
-            i == 'I' &&
-            j == 'J';
+    double xx, yy, ii, jj;
+    this->gcodeLineStream >> x >> xx >> y >> yy >> i >> ii >> j >> jj;
+
+    if (this->gcodeLineStream.fail() || x != 'X' || y != 'Y' || i != 'I' || j != 'J' )
+        return nullptr;
+
+    return std::make_unique<G2>(xx, yy, ii, jj);
 }
 
-bool GCodeLineParser::state_G28()
+std::unique_ptr<GCode> GCodeLineParser::state_G28()
 {
-    return true;  // TODO
+    return nullptr;  // TODO
 }
 
 
-bool GCodeLineParser::state_M()
+std::unique_ptr<GCode> GCodeLineParser::state_M()
 {
-    this->gcodeLineStream >> this->gcode.number;
+    int number;
+    this->gcodeLineStream >> number;
     if (this->gcodeLineStream.fail())
-        return false;
-    switch (this->gcode.number) {
+        return nullptr;
+    switch (number) {
         case 3:
-            return true;
+            return std::make_unique<M3>();
         case 4:
-            return true;
+            return std::make_unique<M4>();
         case 99:
             return this->state_M99();
         default:
-            return false;
+            return nullptr;
     }
 }
 
-bool GCodeLineParser::state_M99()
+std::unique_ptr<GCode> GCodeLineParser::state_M99()
 {
-    this->gcodeLineStream >> this->gcode.x;
-    return !this->gcodeLineStream.fail();
+    double pwmLevel;
+    this->gcodeLineStream >> pwmLevel;
+    if (this->gcodeLineStream.fail())
+        return nullptr;
+    return std::make_unique<M99>(pwmLevel);
 }
 
-bool GCodeParser::getGCode(GCode& gcode)
-{
-    if (! std::getline(std::cin, this->line))
-        return false;
-    
+std::unique_ptr<GCode> GCodeParser::getGCode() {
+    if (!std::getline(std::cin, this->line))
+        return nullptr;
+
     GCodeLineParser parser(this->line);
-    
-    if (! parser.parse())
-        return false;
-    
-    gcode = parser.getGCode();
-    return true;
+
+    return parser.parse();
 }

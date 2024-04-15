@@ -17,7 +17,6 @@ int main() {
     servo.enable();
 
     GCodeParser gcodeParser;
-    GCode gcode;
 
     int delay = 50;  // us
     int steps = 10000;
@@ -36,43 +35,12 @@ int main() {
 
     while (true) {
         std::cout << "GCode:" << std::endl;
-        if (!gcodeParser.getGCode(gcode)) {
+        std::unique_ptr<GCode> gcode = gcodeParser.getGCode();
+        if (gcode == nullptr) {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');  
             std::cout << "Parsing error.\n";
-            gcode.dump();
             continue;
         }
-
-        if (gcode.type == 'M' && gcode.number == 99) {
-            // std::cout << "Setting servo level to: " << (int)gcode.x << std::endl;
-            servo.setLevel((int)gcode.x);
-            std::cout << "OK\n";
-        } else if (gcode.type == 'M' && gcode.number == 3) {
-            plotter.penUp();
-            sleep_ms(100);
-            std::cout << "OK\n";
-        } else if (gcode.type == 'M' && gcode.number == 4) {
-            plotter.penDown();
-            sleep_ms(200);
-            std::cout << "OK\n";
-        } else if (gcode.type == 'G' && gcode.number == 0 || gcode.type == 'G' && gcode.number == 1) {
-            plotter.move(gcode.x, gcode.y);
-        } else if (gcode.type == 'G') {
-            std::cout << "Turning motor 1 direction 1\n";
-            driverX.turnSteps(steps, delay);
-            sleep_ms(300);
-
-            std::cout << "Turning motor 1 direction 2\n";
-            driverX.turnSteps(-steps, delay);
-            sleep_ms(300);
-
-            std::cout << "Turning motor 2 direction 1\n";
-            driverY.turnSteps(steps, delay);
-            sleep_ms(300);
-
-            std::cout << "Turning motor 2 direction 2\n";
-            driverY.turnSteps(-steps, delay);
-            sleep_ms(300);
-        }
+        gcode->execute(plotter);
     }
 }

@@ -28,9 +28,10 @@ public:
     void penUp();
     void penDown();
     void move(double x, double y);
+    const MG90S& getPen();
+private:
 //    void homing();
     static void transformCoordinates(double& x, double& y);
-private:
     static int mmToSteps(double mm);
 };
 
