@@ -70,6 +70,3 @@ void Plotter::move(double x, double y)
 
     std::cout << "OK\n";
 }
-
-
-

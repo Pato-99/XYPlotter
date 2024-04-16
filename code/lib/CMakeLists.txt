@@ -4,6 +4,8 @@ add_library(xyplotter
 		plotter.cpp
 		tmc2209.cpp
 		line.cpp
+		plotter_gcodes.cpp
+		gcode_parser.cpp
 )
 
 target_link_libraries(xyplotter
