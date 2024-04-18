@@ -29,8 +29,8 @@ const MG90S& Plotter::getPen()
 
 void Plotter::transformCoordinates(double& x, double& y)
 {
-    double tmpX = (x - y) / sqrt(2);
-    double tmpY = (x + y) / sqrt(2);
+    double tmpX = (- x - y) / sqrt(2);
+    double tmpY = (x - y) / sqrt(2);
 
     x = tmpX;
     y = tmpY;
@@ -44,14 +44,9 @@ int Plotter::mmToSteps(double mm)
 
 void Plotter::move(double x, double y)
 {
-    Plotter::transformCoordinates(x, y);
+//    Plotter::transformCoordinates(x, y);
 
     Point moveEnd = {mmToSteps(x), mmToSteps(y)};
-
-    // std::cout << "\nCurrentX: " << this->currentX
-    //           << "\nCurrentY " << this->currentY
-    //           << "\nxSteps: " << xSteps
-    //           << "\nySteps: " << ySteps << std::endl;
     
     Line line(current, moveEnd);
     bool xDir = moveEnd.x >= current.x;
@@ -60,13 +55,13 @@ void Plotter::move(double x, double y)
     motorY.setDir(yDir);
 
     for ( const auto& point : line ) {
-        if (point.x != current.x)
+        if (point.x != current.x) {
             motorX.step();
-        if (point.y != current.y)
+        }
+        if (point.y != current.y) {
             motorY.step();
+        }
         current = point;
         sleep_us(delay);
     }
-
-    std::cout << "OK\n";
 }

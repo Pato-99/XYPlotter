@@ -32,13 +32,13 @@ public:
     const MG90S& getPen();
 
     // gcodes
-    void executeG0(const G0 *g0) override;
-    void executeG1(const G1 *g1) override;
-    void executeG2(const G2 *g2) override;
-    void executeG3(const G3 *g3) override;
-    void executeM3(const M3 *m3) override;
-    void executeM4(const M4 *m4) override;
-    void executeM99(const M99 *m99) override;
+    void execute(const G0 *g0) override;
+    void execute(const G1 *g1) override;
+    void execute(const G2 *g2) override;
+    void execute(const G3 *g3) override;
+    void execute(const M3 *m3) override;
+    void execute(const M4 *m4) override;
+    void execute(const M99 *m99) override;
 private:
 //    void homing();
     static void transformCoordinates(double& x, double& y);
