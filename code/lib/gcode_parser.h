@@ -15,15 +15,15 @@ private:
 
 public:
     explicit GCodeLineParser(std::string& gcodeLine);
-    std::unique_ptr<GCode> parse();
+    std::unique_ptr<AbstractGCode> parse();
 
 private:
-    std::unique_ptr<GCode> state_G();
-    std::unique_ptr<GCode> state_G0_G1();
-    std::unique_ptr<GCode> state_G2_G3();
-    std::unique_ptr<GCode> state_G28();
-    std::unique_ptr<GCode> state_M();
-    std::unique_ptr<GCode> state_M99();
+    std::unique_ptr<AbstractGCode> state_G();
+    std::unique_ptr<AbstractGCode> state_G0_G1();
+    std::unique_ptr<AbstractGCode> state_G2_G3();
+    std::unique_ptr<AbstractGCode> state_G28();
+    std::unique_ptr<AbstractGCode> state_M();
+    std::unique_ptr<AbstractGCode> state_M99();
 };
 
 
@@ -34,7 +34,7 @@ private:
     // GCode gcodeBuffer[10];
 public:
     GCodeParser() = default;
-    std::unique_ptr<GCode> getGCode();
+    std::unique_ptr<AbstractGCode> getGCode();
 };
 
 

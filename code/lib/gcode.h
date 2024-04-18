@@ -11,61 +11,66 @@ class Machine;
 // enum class GCodeStatus {OK, BAD};
 enum class GCodeType {G, M, UNKNOWN};
 
-class GCode
+class AbstractGCode
 {
 public:
-    virtual void execute(Machine *machine) const = 0;
     virtual void dump(std::ostream &os) const = 0;
-    virtual ~GCode() = default;
-    friend std::ostream& operator << (std::ostream & os, const GCode& gCode);
+    virtual void execute(Machine *machine) = 0;
+    virtual ~AbstractGCode() = default;
+    friend std::ostream& operator << (std::ostream & os, const AbstractGCode& gCode);
 };
 
-class G0 : public GCode
+
+// CRTP Pattern
+template<class ConcreteGCode>
+class GCode : public AbstractGCode
+{
+public:
+    void execute(Machine *machine) override;
+};
+
+
+class G0 : public GCode<G0>
 {
 public:
     double x;
     double y;
     G0(double x, double y) : x(x), y(y) {};
-    void execute(Machine *machine) const override;
-    virtual void dump(std::ostream &os) const override;
+    void dump(std::ostream &os) const override;
 };
 
 class G1 : public G0
 {};
 
-class G2 : public GCode
+class G2 : public GCode<G2>
 {
 public:
     double x, y, i, j;
     G2(double x, double y, double i, double j) : x(x), y(y), i(i), j(j) {};
-    void execute(Machine *machine) const override;
-    virtual void dump(std::ostream &os) const override;
+    void dump(std::ostream &os) const override;
 };
 
 class G3 : private G2
 {};
 
-class M3 : public GCode
+class M3 : public GCode<M3>
 {
 public:
-    void execute(Machine *machine) const override;
-    virtual void dump(std::ostream &os) const override;
+    void dump(std::ostream &os) const override;
 };
 
-class M4 : public GCode
+class M4 : public GCode<M4>
 {
 public:
-    void execute(Machine *machine) const override;
-    virtual void dump(std::ostream &os) const override;
+    void dump(std::ostream &os) const override;
 };
 
-class M99 : public GCode
+class M99 : public GCode<M99>
 {
 public:
     uint16_t pwmLevel;
     explicit M99(uint16_t pwmLevel) : pwmLevel(pwmLevel) {};
-    void execute(Machine *machine) const override;
-    virtual void dump(std::ostream &os) const override;
+    void dump(std::ostream &os) const override;
 };
 
 

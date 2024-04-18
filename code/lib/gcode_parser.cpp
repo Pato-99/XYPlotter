@@ -7,7 +7,7 @@ GCodeLineParser::GCodeLineParser(std::string& gcodeLine)
 {
 }
 
-std::unique_ptr<GCode> GCodeLineParser::parse()
+std::unique_ptr<AbstractGCode> GCodeLineParser::parse()
 {
     char type;
     this->gcodeLineStream >> type;
@@ -24,7 +24,7 @@ std::unique_ptr<GCode> GCodeLineParser::parse()
     }
 }
 
-std::unique_ptr<GCode> GCodeLineParser::state_G()
+std::unique_ptr<AbstractGCode> GCodeLineParser::state_G()
 {
     int number;
     this->gcodeLineStream >> number;
@@ -45,7 +45,7 @@ std::unique_ptr<GCode> GCodeLineParser::state_G()
     }
 }
 
-std::unique_ptr<GCode> GCodeLineParser::state_G0_G1()
+std::unique_ptr<AbstractGCode> GCodeLineParser::state_G0_G1()
 {
     char c;
     double value, x, y;
@@ -69,7 +69,7 @@ std::unique_ptr<GCode> GCodeLineParser::state_G0_G1()
 }
 
 
-std::unique_ptr<GCode> GCodeLineParser::state_G2_G3()
+std::unique_ptr<AbstractGCode> GCodeLineParser::state_G2_G3()
 {
     char x, y, i, j;
     double xx, yy, ii, jj;
@@ -81,13 +81,13 @@ std::unique_ptr<GCode> GCodeLineParser::state_G2_G3()
     return std::make_unique<G2>(xx, yy, ii, jj);
 }
 
-std::unique_ptr<GCode> GCodeLineParser::state_G28()
+std::unique_ptr<AbstractGCode> GCodeLineParser::state_G28()
 {
     return nullptr;  // TODO
 }
 
 
-std::unique_ptr<GCode> GCodeLineParser::state_M()
+std::unique_ptr<AbstractGCode> GCodeLineParser::state_M()
 {
     int number;
     this->gcodeLineStream >> number;
@@ -105,7 +105,7 @@ std::unique_ptr<GCode> GCodeLineParser::state_M()
     }
 }
 
-std::unique_ptr<GCode> GCodeLineParser::state_M99()
+std::unique_ptr<AbstractGCode> GCodeLineParser::state_M99()
 {
     double pwmLevel;
     this->gcodeLineStream >> pwmLevel;
@@ -114,7 +114,7 @@ std::unique_ptr<GCode> GCodeLineParser::state_M99()
     return std::make_unique<M99>(pwmLevel);
 }
 
-std::unique_ptr<GCode> GCodeParser::getGCode() {
+std::unique_ptr<AbstractGCode> GCodeParser::getGCode() {
     if (!std::getline(std::cin, this->line))
         return nullptr;
 

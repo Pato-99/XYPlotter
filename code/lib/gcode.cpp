@@ -3,11 +3,6 @@
 
 #include "gcode.h"
 
-
-void G0::execute(Machine *machine) const {
-    machine->execute(this);
-}
-
 void G0::dump(std::ostream &os) const {
     os << "gcode:\n{";
     os << "\n\ttype: " << "G";
@@ -15,10 +10,6 @@ void G0::dump(std::ostream &os) const {
     os << "\n\tx: " << this->x;
     os << "\n\ty: " << this->y;
     os << "\n}\n";
-}
-
-void G2::execute(Machine *machine) const {
-    machine->execute(this);
 }
 
 void G2::dump(std::ostream &os) const {
@@ -32,9 +23,6 @@ void G2::dump(std::ostream &os) const {
     os << "\n}\n";
 }
 
-void M3::execute(Machine *machine) const {
-    machine->execute(this);
-}
 
 void M3::dump(std::ostream &os) const {
     os << "gcode:\n{";
@@ -43,19 +31,12 @@ void M3::dump(std::ostream &os) const {
     os << "\n}\n";
 }
 
-void M4::execute(Machine *machine) const {
-    machine->execute(this);
-}
 
 void M4::dump(std::ostream &os) const {
     os << "gcode:\n{";
     os << "\n\ttype: " << "M";
     os << "\n\tnumber: " <<  4;
     os << "\n}\n";
-}
-
-void M99::execute(Machine *machine) const {
-    machine->execute(this);
 }
 
 void M99::dump(std::ostream &os) const {
@@ -66,7 +47,12 @@ void M99::dump(std::ostream &os) const {
     os << "\n}\n";
 }
 
-std::ostream &operator<<(std::ostream &os, const GCode& gCode) {
+std::ostream &operator<<(std::ostream &os, const AbstractGCode& gCode) {
     gCode.dump(os);
     return os;
+}
+
+template<class ConcreteGCode>
+void GCode<ConcreteGCode>::execute(Machine *machine) {
+    machine->execute(static_cast<ConcreteGCode*>(this));
 }
