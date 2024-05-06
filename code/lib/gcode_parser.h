@@ -19,10 +19,12 @@ public:
 
 private:
     std::unique_ptr<AbstractGCode> state_G();
-    std::unique_ptr<AbstractGCode> state_G0_G1();
+    std::unique_ptr<AbstractGCode> state_G0_G1(int number);
     std::unique_ptr<AbstractGCode> state_G2_G3();
+    std::unique_ptr<AbstractGCode> state_G4();
     std::unique_ptr<AbstractGCode> state_G28();
     std::unique_ptr<AbstractGCode> state_M();
+    std::unique_ptr<AbstractGCode> state_M98();
     std::unique_ptr<AbstractGCode> state_M99();
 };
 

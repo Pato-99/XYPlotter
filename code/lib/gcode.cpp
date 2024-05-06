@@ -23,6 +23,21 @@ void G2::dump(std::ostream &os) const {
     os << "\n}\n";
 }
 
+void G4::dump(std::ostream &os) const {
+    os << "gcode:\n{";
+    os << "\n\ttype: " << "G";
+    os << "\n\tnumber: " <<  4;
+    os << "\n\tdelay_ms: " << this->delay_ms;
+    os << "\n}\n";
+}
+
+void G92::dump(std::ostream &os) const {
+    os << "gcode:\n{";
+    os << "\n\ttype: " << "G";
+    os << "\n\tnumber: " <<  92;
+    os << "\n}\n";
+}
+
 
 void M3::dump(std::ostream &os) const {
     os << "gcode:\n{";
@@ -39,6 +54,15 @@ void M4::dump(std::ostream &os) const {
     os << "\n}\n";
 }
 
+void M98::dump(std::ostream &os) const {
+    os << "gcode:\n{";
+    os << "\n\ttype: " << "M";
+    os << "\n\tnumber: " <<  98;
+    os << "\n\tpwmLevel: " <<  this->delay;
+    os << "\n}\n";
+}
+
+
 void M99::dump(std::ostream &os) const {
     os << "gcode:\n{";
     os << "\n\ttype: " << "M";
@@ -53,6 +77,7 @@ std::ostream &operator<<(std::ostream &os, const AbstractGCode& gCode) {
 }
 
 template<class ConcreteGCode>
-void GCode<ConcreteGCode>::execute(Machine *machine) {
+void GCode<ConcreteGCode>::execute(Plotter *machine) {
     machine->execute(static_cast<ConcreteGCode*>(this));
 }
+

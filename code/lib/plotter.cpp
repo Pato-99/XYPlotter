@@ -1,6 +1,5 @@
 
 #include <cmath>
-#include <iostream>
 #include "pico/stdlib.h"
 #include "plotter.h"
 #include "line.h"
@@ -22,15 +21,10 @@ void Plotter::penDown()
     this->penIsUp = false;
 }
 
-const MG90S& Plotter::getPen()
-{
-    return this->pen;
-}
-
 void Plotter::transformCoordinates(double& x, double& y)
 {
-    double tmpX = (- x - y) / sqrt(2);
-    double tmpY = (x - y) / sqrt(2);
+    double tmpX = (- x + y) / sqrt(2);
+    double tmpY = (- x - y) / sqrt(2);
 
     x = tmpX;
     y = tmpY;
@@ -44,7 +38,7 @@ int Plotter::mmToSteps(double mm)
 
 void Plotter::move(double x, double y)
 {
-//    Plotter::transformCoordinates(x, y);
+    Plotter::transformCoordinates(x, y);
 
     Point moveEnd = {mmToSteps(x), mmToSteps(y)};
     
@@ -65,3 +59,9 @@ void Plotter::move(double x, double y)
         sleep_us(delay);
     }
 }
+
+void Plotter::resetPosition() {
+    this->current = {0, 0};
+}
+
+

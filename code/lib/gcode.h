@@ -4,9 +4,9 @@
 #include <ostream>
 #include <memory>
 
-#include "machine.h"
+#include "plotter.h"
 
-class Machine;
+class Plotter;
 
 // enum class GCodeStatus {OK, BAD};
 enum class GCodeType {G, M, UNKNOWN};
@@ -15,7 +15,7 @@ class AbstractGCode
 {
 public:
     virtual void dump(std::ostream &os) const = 0;
-    virtual void execute(Machine *machine) = 0;
+    virtual void execute(Plotter *machine) = 0;
     virtual ~AbstractGCode() = default;
     friend std::ostream& operator << (std::ostream & os, const AbstractGCode& gCode);
 };
@@ -26,7 +26,7 @@ template<class ConcreteGCode>
 class GCode : public AbstractGCode
 {
 public:
-    void execute(Machine *machine) override;
+    void execute(Plotter *machine) override;
 };
 
 
@@ -40,7 +40,10 @@ public:
 };
 
 class G1 : public G0
-{};
+{
+public:
+    G1(double x, double y) : G0(x, y) {};
+};
 
 class G2 : public GCode<G2>
 {
@@ -50,18 +53,47 @@ public:
     void dump(std::ostream &os) const override;
 };
 
-class G3 : private G2
-{};
+class G3 : public G2
+{
+public:
+    G3(double x, double y, double i, double j) : G2(x, y, i, j) {};
+};
 
+class G4 : public GCode<G4>
+{
+public:
+    double delay_ms;
+    explicit G4(double delay_ms) : delay_ms(delay_ms) {};
+    void dump(std::ostream &os) const override;
+};
+
+// Reset coordinates to zero
+class G92 : public GCode<G92>
+{
+public:
+    void dump(std::ostream &os) const override;
+};
+
+
+// Pen up
 class M3 : public GCode<M3>
 {
 public:
     void dump(std::ostream &os) const override;
 };
 
+// Pen down
 class M4 : public GCode<M4>
 {
 public:
+    void dump(std::ostream &os) const override;
+};
+
+class M98 : public GCode<M98>
+{
+public:
+    int delay;
+    explicit M98(int delay) : delay(delay) {};
     void dump(std::ostream &os) const override;
 };
 
