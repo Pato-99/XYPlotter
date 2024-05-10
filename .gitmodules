@@ -1,3 +1,6 @@
-[submodule "code/pico-sdk"]
-	path = code/pico-sdk
-	url = git@github.com:raspberrypi/pico-sdk.git
+[submodule "XYPlotter-CLI"]
+	path = XYPlotter-CLI
+	url = git@github.com:Pato-99/XYPlotter-CLI.git
+[submodule "XYPlotter-Firmware"]
+	path = XYPlotter-Firmware
+	url = git@github.com:Pato-99/XYPlotter-Firmware.git
